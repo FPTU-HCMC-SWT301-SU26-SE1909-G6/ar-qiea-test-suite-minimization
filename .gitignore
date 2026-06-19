@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+
+# Test/cache artifacts
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+build/
+dist/
+*.egg
+
+# Local environment and OS files
+.env
+.DS_Store
+
+# Local outputs, logs, and temporary worktrees
+*.log
+/outputs/
+work/
+artifacts/
+
+# Heavy/generated raw dataset files.
+# Keep processed summaries such as matrix.csv, tests.txt,
+# requirements.txt, metadata.json, and report/summary.md trackable.
+datasets/**/raw/
