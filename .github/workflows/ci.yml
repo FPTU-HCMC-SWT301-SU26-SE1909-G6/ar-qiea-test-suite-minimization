@@ -23,5 +23,5 @@ jobs:
           python -m pip install -e '.[dev]'
       - name: Run tests
         run: pytest -q
-      - name: CLI smoke benchmark
-        run: python -m quantum_testing.cli benchmark --tests 12 --requirements 8 --runs 2 --seed 42
+      - name: CLI smoke test
+        run: python -m quantum_testing.cli pareto --matrix tests/fixtures/pareto_matrix.csv --algo ar-qiea --seed 42 --pop 8 --gens 5
