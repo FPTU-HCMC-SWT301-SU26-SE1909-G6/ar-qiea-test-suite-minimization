@@ -2,11 +2,11 @@
 
 - Project: Lang
 - Version: 6b
-- Tests in tests.txt: 20
-- Tests in matrix.csv: 20
+- Tests in tests.txt: 2222
+- Tests in matrix.csv: 2222
 - Requirements: 28
 - Skipped tests: 0
-- Runtime seconds: 61.27
+- Runtime seconds: 7184.27
 
 Generated files:
 
