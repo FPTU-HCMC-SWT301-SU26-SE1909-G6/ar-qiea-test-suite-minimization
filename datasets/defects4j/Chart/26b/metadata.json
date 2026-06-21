@@ -1,0 +1,21 @@
+{
+  "project": "Chart",
+  "bug_id": 26,
+  "version": "26b",
+  "work_dir": "/home/tikeolun/d4j-work/Chart_26b",
+  "out_dir": "/mnt/d/FPT/Study/2026/sem5/SWT301/Quantun+Testing/OFFICIAL/quantum-testing/datasets/defects4j/Chart/26b",
+  "generated_at": "2026-06-21T00:38:47",
+  "max_tests": 0,
+  "coverage_timeout_seconds": 300,
+  "tests_total_in_tests_txt": 1598,
+  "tests_total_in_matrix": 1598,
+  "requirements_total": 310,
+  "zero_coverage_rows_total": 1368,
+  "skipped_tests_total": 0,
+  "matrix_format": "CSV header = test_id + requirements; cells are 0/1 coverage",
+  "requirement_definition": "Covered source lines from Defects4J coverage -r, filtered to modified classes when possible",
+  "modified_classes": [
+    "org.jfree.chart.axis.Axis"
+  ],
+  "used_modified_class_filter": true
+}

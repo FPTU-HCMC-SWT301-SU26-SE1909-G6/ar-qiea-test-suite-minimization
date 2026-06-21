@@ -11,6 +11,11 @@ from datetime import datetime
 from pathlib import Path
 
 
+PROJECT = "Lang"
+BUG_ID = 6
+VERSION = "6b"
+
+
 def run_cmd(cmd, cwd=None, timeout=None):
     return subprocess.run(
         cmd,
@@ -54,7 +59,7 @@ def find_test_methods(java_file):
     clean = strip_comments(text)
     methods = set()
 
-    junit4 = re.compile(
+    junit4_pattern = re.compile(
         r"@Test\b[\s\S]{0,500}?"
         r"(?:public|protected|private)?\s+"
         r"(?:void|[A-Za-z0-9_<>\[\].]+)\s+"
@@ -62,18 +67,18 @@ def find_test_methods(java_file):
         re.MULTILINE,
     )
 
-    junit3 = re.compile(
+    junit3_pattern = re.compile(
         r"(?:public|protected)?\s+void\s+(test[A-Za-z0-9_]*)\s*\(",
         re.MULTILINE,
     )
 
-    for m in junit4.finditer(clean):
+    for m in junit4_pattern.finditer(clean):
         methods.add(m.group(1))
 
-    for m in junit3.finditer(clean):
+    for m in junit3_pattern.finditer(clean):
         methods.add(m.group(1))
 
-    return [f"{fqcn}::{m}" for m in sorted(methods)]
+    return [f"{fqcn}::{method}" for method in sorted(methods)]
 
 
 def collect_tests_from_export(work_dir):
@@ -84,6 +89,10 @@ def collect_tests_from_export(work_dir):
         line = line.strip()
         if not line:
             continue
+
+        # Defects4J sometimes exports method-level tests as Class::method.
+        # If only class-level names are exported, this function returns empty,
+        # then we parse source files instead.
         if "::" in line:
             tests.append(line)
 
@@ -187,7 +196,11 @@ def main():
     if max_tests > 0:
         tests = tests[:max_tests]
 
-    (out_dir / "tests.txt").write_text("\n".join(tests) + "\n", encoding="utf-8")
+    if not tests:
+        raise RuntimeError("No test cases found.")
+
+    tests_path = out_dir / "tests.txt"
+    tests_path.write_text("\n".join(tests) + "\n", encoding="utf-8")
     print(f"Saved tests.txt: {len(tests)} tests")
 
     print("")
@@ -223,10 +236,8 @@ def main():
     if not requirements:
         raise RuntimeError("No requirements found from coverage_relevant.xml.")
 
-    (out_dir / "requirements.txt").write_text(
-        "\n".join(requirements) + "\n",
-        encoding="utf-8",
-    )
+    req_path = out_dir / "requirements.txt"
+    req_path.write_text("\n".join(requirements) + "\n", encoding="utf-8")
     print(f"Saved requirements.txt: {len(requirements)} requirements")
 
     print("")
@@ -275,7 +286,8 @@ def main():
             shutil.copy2(old_xml, dst_xml)
 
             covered = parse_covered(dst_xml)
-            writer.writerow([test_id] + [1 if req in covered else 0 for req in requirements])
+            row = [test_id] + [1 if req in covered else 0 for req in requirements]
+            writer.writerow(row)
             rows += 1
 
     elapsed = time.time() - start
@@ -288,9 +300,9 @@ def main():
     )
 
     metadata = {
-        "project": "Lang",
-        "bug_id": 6,
-        "version": "6b",
+        "project": PROJECT,
+        "bug_id": BUG_ID,
+        "version": VERSION,
         "work_dir": str(work_dir),
         "out_dir": str(out_dir),
         "generated_at": datetime.now().isoformat(timespec="seconds"),
@@ -303,7 +315,8 @@ def main():
         "requirement_definition": "Covered source lines in Defects4J modified classes, based on defects4j coverage -r",
     }
 
-    (out_dir / "metadata.json").write_text(
+    metadata_path = out_dir / "metadata.json"
+    metadata_path.write_text(
         json.dumps(metadata, indent=2, ensure_ascii=False),
         encoding="utf-8",
     )
@@ -329,7 +342,8 @@ def main():
         "- raw/logs/",
     ]
 
-    (report_dir / "summary.md").write_text("\n".join(report), encoding="utf-8")
+    summary_path = report_dir / "summary.md"
+    summary_path.write_text("\n".join(report), encoding="utf-8")
 
     print("")
     print("[4] DONE")

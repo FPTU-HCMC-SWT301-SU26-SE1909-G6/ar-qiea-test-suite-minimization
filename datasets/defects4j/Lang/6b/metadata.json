@@ -1,0 +1,15 @@
+{
+  "project": "Lang",
+  "bug_id": 6,
+  "version": "6b",
+  "work_dir": "/home/tikeolun/d4j-work/Lang_6b",
+  "out_dir": "/mnt/d/FPT/Study/2026/sem5/SWT301/Quantun+Testing/OFFICIAL/quantum-testing/datasets/defects4j/Lang/6b",
+  "generated_at": "2026-06-19T00:06:18",
+  "max_tests": 0,
+  "tests_total_in_tests_txt": 2222,
+  "tests_total_in_matrix": 2222,
+  "requirements_total": 28,
+  "skipped_tests_total": 0,
+  "matrix_format": "CSV header = test_id + requirements; cells are 0/1 coverage",
+  "requirement_definition": "Covered source lines in Defects4J modified classes, based on defects4j coverage -r"
+}

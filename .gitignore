@@ -35,3 +35,5 @@ artifacts/
 # Keep processed summaries such as matrix.csv, tests.txt,
 # requirements.txt, metadata.json, and report/summary.md trackable.
 datasets/**/raw/
+
+.tmp/
