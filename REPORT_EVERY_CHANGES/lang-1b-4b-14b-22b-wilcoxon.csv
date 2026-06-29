@@ -1,0 +1,17 @@
+case,comparison,pvalue
+14b,ar_qiea_vs_mo_qiea,5.122274160385132e-08
+14b,ar_qiea_vs_nsga2,0.059538284316658974
+14b,ar_qiea_vs_random_front,9.313225746154785e-10
+14b,ar_qiea_vs_risk_shuffled_ar_qiea,4.6566128730773926e-09
+1b,ar_qiea_vs_mo_qiea,2.7939677238464355e-09
+1b,ar_qiea_vs_nsga2,9.313225746154785e-10
+1b,ar_qiea_vs_random_front,9.313225746154785e-10
+1b,ar_qiea_vs_risk_shuffled_ar_qiea,1.0244548320770264e-07
+22b,ar_qiea_vs_mo_qiea,0.0004359101876616478
+22b,ar_qiea_vs_nsga2,1.862645149230957e-09
+22b,ar_qiea_vs_random_front,9.313225746154785e-10
+22b,ar_qiea_vs_risk_shuffled_ar_qiea,0.000859295018017292
+4b,ar_qiea_vs_mo_qiea,9.313225746154785e-10
+4b,ar_qiea_vs_nsga2,0.9999999487772584
+4b,ar_qiea_vs_random_front,1.0
+4b,ar_qiea_vs_risk_shuffled_ar_qiea,9.313225746154785e-10
