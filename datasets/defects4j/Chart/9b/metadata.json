@@ -1,0 +1,15 @@
+{
+  "project": "Chart",
+  "bug_id": 9,
+  "version": "9b",
+  "work_dir": "/home/tikeolun/d4j-work/Chart_9b",
+  "out_dir": "/mnt/d/FPT/Study/2026/sem5/SWT301/Quantun+Testing/OFFICIAL/quantum-testing/datasets/defects4j/Chart/9b",
+  "generated_at": "2026-06-21T09:34:44",
+  "max_tests": 0,
+  "tests_total_in_tests_txt": 1812,
+  "tests_total_in_matrix": 1812,
+  "requirements_total": 220,
+  "skipped_tests_total": 0,
+  "matrix_format": "CSV header = test_id + requirements; cells are 0/1 coverage",
+  "requirement_definition": "Covered source lines collected from Defects4J coverage -r"
+}

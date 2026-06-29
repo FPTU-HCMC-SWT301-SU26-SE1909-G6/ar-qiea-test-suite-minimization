@@ -1,0 +1,55 @@
+\section{BRARS comparison}
+\label{app:brars-comparison}
+
+To provide a compact supplementary interpretation of the trade-off between objective preservation and test-suite reduction, we introduce the Balanced Retention-Aware Reduction Score ($BRARS$). BRARS is a supplementary metric proposed in this study for result interpretation only. It is not used as an optimization objective and does not replace Pareto-front evaluation.
+
+Let $T$ denote the original test suite and $S \subseteq T$ denote the selected subset. The Test Reduction Ratio is defined as:
+\begin{equation}
+TRR(S) = 1 - \frac{|S|}{|T|},
+\label{eq:trr}
+\end{equation}
+where $|S|$ is the number of retained test cases and $|T|$ is the original test-suite size. BRARS is computed as:
+\begin{equation}
+\begin{aligned}
+BRARS(S) ={}&
+\mathbb{I}[CR(S) \geq 0.95] \
+&\cdot
+\left(
+MSR(S) \cdot CGCC(S) \cdot ETR(S)
+\cdot TRR(S)^{\lambda}
+\right)^{\frac{1}{3+\lambda}} .
+\end{aligned}
+\label{eq:brars}
+\end{equation}
+
+Here, $\mathbb{I}[CR(S) \geq 0.95]$ assigns zero score to subsets that violate the coverage-retention constraint. The terms $MSR(S)$, $CGCC(S)$, and $ETR(S)$ represent the three main evaluation objectives, while $TRR(S)$ is included as an additional size-reduction factor. We set $\lambda=0.5$ so that $TRR$ contributes as a secondary size-reduction factor: it still rewards smaller selected test subsets, but does not dominate the three primary objectives $MSR$, $CGCC$, and $ETR$.
+
+BRARS follows a weighted geometric mean design, which favors balanced solutions and penalizes cases where one metric is very low. This prevents a high value in one metric from masking poor performance in another. Therefore, BRARS is used only as a supplementary interpretability score, not as evidence of Pareto dominance.
+
+\begin{table}[!htbp]
+\centering
+\caption{$BRARS$ comparison across Defects4J datasets}
+\label{tab:brars-comparison}
+\small
+\setlength{\tabcolsep}{8pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{lcccc}
+\toprule
+Dataset & $AR$-$QIEA$ & $MO$-$QIEA$ & $NSGA$-$II$ & $Random$-$Front$ \\
+\midrule
+Chart-1b  & 0.816927 & 0.807096 & 0.832880 & 0.802836 \\
+Chart-20b & 0.829179 & 0.821580 & 0.859023 & 0.967264 \\
+Chart-26b & 0.861955 & 0.846803 & 0.883194 & 0.948726 \\
+Lang-1b   & 0.733749 & 0.724700 & 0.702080 & 0.541791 \\
+Lang-3b   & 0.713539 & 0.707356 & 0.693243 & 0.532950 \\
+Lang-4b   & 0.845444 & 0.839005 & 0.860116 & 0.980431 \\
+Lang-5b   & 0.772869 & 0.769496 & 0.791941 & 0.765597 \\
+Lang-6b   & 0.845393 & 0.837357 & 0.860138 & 0.977101 \\
+Lang-14b  & 0.650052 & 0.329471 & 0.589711 & 0.449375 \\
+Lang-20b  & 0.684844 & 0.684049 & 0.686359 & 0.627953 \\
+Lang-22b  & 0.720990 & 0.717217 & 0.699069 & 0.600133 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The $BRARS$ results provide an additional view of the trade-off between objective preservation and test-suite reduction. AR-QIEA obtains higher $BRARS$ values than MO-QIEA across all eleven datasets, further supporting the effectiveness of the adaptive rotation strategy over the closest quantum-inspired ablation baseline. Compared with Random-Front, AR-QIEA achieves higher $BRARS$ values on seven out of eleven datasets, indicating a more stable balance between retention-oriented objectives and reduction. However, Random-Front obtains higher scores on several sparse datasets, such as Chart-20b, Chart-26b, Lang-4b, and Lang-6b, mainly due to very high reduction-related values. For this reason, $BRARS$ is treated only as supplementary evidence and is not used to replace the main multi-objective evaluation.

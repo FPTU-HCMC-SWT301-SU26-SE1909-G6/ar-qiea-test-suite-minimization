@@ -67,17 +67,53 @@ These proxies are useful for repeatable experiments, but they should not be inte
 | Greedy set cover | `src/quantum_testing/cli.py` and benchmark helper | Deterministic single-point coverage baseline |
 | QIEA | `src/quantum_testing/algorithms/qiea.py` | Earlier single-objective quantum-inspired baseline |
 
-## Datasets
+## Dataset Preparation and Artifact Structure
 
-Datasets are stored under `datasets/defects4j/Lang/`. Matrices use CSV format with `test_id` followed by binary requirement columns.
+Processed Defects4J datasets are stored under `datasets/defects4j/<Project>/<BugId>b/`. The included folders are processed artifacts: they are intended to let the benchmark run from a fixed coverage matrix without requiring users to rerun Defects4J coverage collection first.
 
-| Dataset | Status | Tests in matrix | Requirements | Notes |
-|---|---:|---:|---:|---|
-| `datasets/defects4j/Lang/3b` | Complete local dataset | 2,245 | 366 | Main Defects4J Lang dataset used by the full Pareto benchmark artifact |
-| `datasets/defects4j/Lang/6b_smoke_20` | Smoke dataset | 20 | 28 | Metadata indicates `max_tests=20`; suitable for fast checks only |
-| `datasets/defects4j/Lang/6b` | Incomplete/inconsistent local folder | 122 matrix rows | 28 | No metadata file; `tests.txt` contains 2,222 lines, so this folder should not be treated as a validated full dataset |
+The preparation workflow used by the dataset scripts is:
 
-For Lang 3b, `metadata.json` reports that requirements are covered source lines in Defects4J modified classes based on `defects4j coverage -r`. The detailed report also notes that many tests have zero coverage over the modified-line requirement set, which is important when interpreting minimization results.
+1. Check out the target Defects4J buggy version.
+2. Collect candidate test identifiers from Defects4J metadata such as `tests.all`, `tests.relevant`, and `tests.trigger`.
+3. Run Defects4J coverage for the relevant suite and for individual tests.
+4. Parse coverage XML files into source-element requirements.
+5. Build the processed files `tests.txt`, `requirements.txt`, `matrix.csv`, and `metadata.json`.
+6. Validate matrix consistency before using the dataset in benchmark runs.
+
+Each processed dataset folder may contain:
+
+| File or directory | Meaning |
+|---|---|
+| `tests.txt` | Final valid test suite used as the original suite `T` in experiments. |
+| `requirements.txt` | Extracted requirement/source-element list `R`, usually covered source lines from modified or relevant Defects4J classes. |
+| `matrix.csv` | Binary test-requirement coverage matrix. The first column is `test_id`; remaining columns correspond to `requirements.txt`. |
+| `metadata.json` | Dataset summary and provenance fields such as test count, requirement count, matrix format, requirement definition, validation status, warnings, skipped tests, failed coverage collection, zero-coverage rows, or coverage statistics when available. |
+| `raw/coverage/` | Raw per-test coverage XML files, when retained locally. Some archived folders may include only the processed matrix artifacts. |
+| Auxiliary files | Optional Defects4J or workflow records such as `tests.all`, `tests.relevant`, `tests.trigger`, `skipped_tests.txt`, logs, coverage-failure records, or `report/summary.md`. Presence varies by instance. |
+
+The consistency checks expected for a usable processed dataset are:
+
+- matrix rows match the final tests in `tests.txt`;
+- matrix columns match the requirements in `requirements.txt`;
+- matrix values are binary coverage indicators;
+- duplicated or invalid tests are excluded from the final matrix;
+- skipped tests, failed coverage collection, zero-coverage rows, and uncovered requirements are recorded as warnings or metadata instead of being silently hidden.
+
+Zero-coverage rows can occur when the requirement set is focused on modified or relevant program elements: a test may be valid in the original suite but not cover the selected requirement slice. A dataset with non-critical warnings can still be usable for the reported benchmark if the warnings are explicit in `metadata.json` or the accompanying report.
+
+Included processed dataset folders currently include:
+
+- `datasets/defects4j/Lang/3b`
+- `datasets/defects4j/Lang/5b`
+- `datasets/defects4j/Lang/6b`
+- `datasets/defects4j/Lang/20b`
+- `datasets/defects4j/Chart/1b`
+- `datasets/defects4j/Chart/9b`
+- `datasets/defects4j/Chart/17b`
+- `datasets/defects4j/Chart/20b`
+- `datasets/defects4j/Chart/26b`
+
+To inspect a dataset, open its `metadata.json`, compare the first row of `matrix.csv` with `requirements.txt`, and compare the matrix test-id column with `tests.txt`. The benchmark runner stores the exact `root`, seed list, algorithms, and proxy-risk configuration in each output JSON under `config`, so users can identify which instance was used for a result.
 
 ## Repository Structure
 
@@ -94,7 +130,7 @@ quantum-testing/
     pareto_benchmark.py  Main Pareto benchmark runner
     plot_pareto.py       Pareto projection and hypervolume plotting script
   datasets/
-    defects4j/Lang/      Local Defects4J Lang matrices and metadata
+    defects4j/           Processed Defects4J matrices and metadata
   artifacts/
     pareto/              Benchmark JSON outputs, logs, and run metadata
   REPORT_EVERY_CHANGES/  Detailed analysis and statistical notes
@@ -102,8 +138,6 @@ quantum-testing/
   SPEC-AR-QIEA.md        Research and implementation specification
   pyproject.toml         Package metadata and dependencies
 ```
-
-The `work/defects4j/` directory contains a local Defects4J checkout/work area and generated build files. It is not part of the Python package itself.
 
 ## Setup
 
@@ -162,7 +196,7 @@ Fast smoke example:
 
 ```bash
 python scripts/pareto_benchmark.py \
-  --root datasets/defects4j/Lang/6b_smoke_20 \
+  --root datasets/defects4j/Lang/6b \
   --seeds 42..44 \
   --pop 10 \
   --gens 20 \
